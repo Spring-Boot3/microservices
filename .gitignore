@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Files ###
+companies/.gitattributes
+companies/.gitignore
+companies/.mvn/
+/companies/.gitignore
