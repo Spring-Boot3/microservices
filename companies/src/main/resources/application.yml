@@ -1,13 +1,18 @@
 spring:
   application:
     name: companies
+
   datasource:
-    url: jdbc:postgresql://localhost:5434/companies
-    username: romLab
-    password: udemy
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
     hikari:
-      maximum-pool-size: '5'
-      connection-timeout: '20000'
+      maximum-pool-size: ${spring.datasource.hikari.maximum-pool-size}
+      connection-timeout: ${spring.datasource.hikari.connection-timeout}
+  profiles:
+    default: default
+  config:
+    import: "optional:configserver:http://localhost:7777"
 
 logging:
   level:

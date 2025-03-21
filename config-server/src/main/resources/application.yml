@@ -1,0 +1,22 @@
+server:
+  port: 7777
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: default
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Spring-Boot3/microservice-config.git
+          default-label: hectorDev
+          clone-on-start: true
+          username: HectorARG
+          password: ${GIT_TOKEN}
+eureka:
+  instance:
+    instance-id: "${spring.application.name}:${random.value}"
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
