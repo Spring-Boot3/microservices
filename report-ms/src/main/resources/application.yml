@@ -9,7 +9,7 @@ spring:
 server:
   servlet:
     context-path: /api/report/
-  port: 7070
+  port: 0
 
 eureka:
   instance:

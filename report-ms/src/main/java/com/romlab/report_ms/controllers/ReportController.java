@@ -30,7 +30,7 @@ public class ReportController {
     }
 
     @DeleteMapping(path = "/{name}")
-    public ResponseEntity<?> delete(@PathVariable String name) {
+    public ResponseEntity<Void> delete(@PathVariable String name) {
         log.info("DELETE: company {}", name);
         reportService.deleteReport(name);
         return ResponseEntity.noContent().build();
