@@ -3,9 +3,11 @@ package com.romlab.report_ms.services;
 import com.romlab.report_ms.helpers.ReportHelper;
 import com.romlab.report_ms.models.CompanyDTO;
 import com.romlab.report_ms.models.WebSiteDTO;
+import com.romlab.report_ms.repositories.CompaniesFallbackRepository;
 import com.romlab.report_ms.repositories.CompaniesRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,10 +22,13 @@ public class ReportServiceImpl implements ReportService {
 
     private final CompaniesRepository companiesRepository;
     private final ReportHelper reportHelper;
+    private final CompaniesFallbackRepository companiesFallbackRepository;
+    private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public String makeReport(String name) {
-        return reportHelper.readTemplate(companiesRepository.getByName(name).orElseThrow());
+        var circuitBreaker = circuitBreakerFactory.create("companies-circuitbreaker");
+        return circuitBreaker.run(() -> makeReportMain(name), throwable -> makeReportFallBack(name, throwable));
     }
 
     @Override
@@ -44,5 +49,14 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void deleteReport(String name) {
         companiesRepository.deleteByName(name);
+    }
+
+    private String makeReportMain(String name) {
+        return reportHelper.readTemplate(companiesRepository.getByName(name).orElseThrow());
+    }
+
+    private String makeReportFallBack(String name, Throwable error) {
+        log.warn("Error: {}", error.getMessage());
+        return reportHelper.readTemplate(companiesFallbackRepository.getByName(name));
     }
 }

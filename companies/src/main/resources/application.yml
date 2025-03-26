@@ -30,7 +30,7 @@ logging:
 server:
   servlet:
     context-path: /api/companies/
-  port: 0
+  port: 8081
 
 eureka:
   instance:

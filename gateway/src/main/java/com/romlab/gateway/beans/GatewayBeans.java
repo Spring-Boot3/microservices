@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Set;
+
 @Configuration
 public class GatewayBeans {
 
@@ -38,6 +40,27 @@ public class GatewayBeans {
                         .uri("lb://companies"))
                 .route("report", r -> r.path("/api/report/**")
                         .uri("lb://report-ms"))
+                .build();
+    }
+
+    @Bean
+    @Profile(value = "eureka-on-cb")
+    public RouteLocator routeLocatorEurekaOnCB(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("companies", r -> r.path("/api/companies/**")
+                        .filters(filter -> {
+                            filter.circuitBreaker(config -> config
+                                    .setName("companies-cb")
+                                    .setStatusCodes(Set.of("500","400"))
+                                    .setFallbackUri("forward:/companies-fallback/*")
+                            );
+                            return filter;
+                        })
+                        .uri("lb://companies"))
+                .route("report", r -> r.path("/api/report/**")
+                        .uri("lb://report-ms"))
+                .route("report", r -> r.path("/companies-fallback/**")
+                        .uri("lb://companies-fallback"))
                 .build();
     }
 
