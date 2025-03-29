@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-
   db:
     image: postgres:16.1
     container_name: db-companies
@@ -11,7 +8,7 @@ services:
       - ./sql/data.sql:/docker-entrypoint-initdb.d/data.sql
     environment:
       POSTGRES_DB: 'companies'
-      POSTGRES_USER: 'romLab'
-      POSTGRES_PASSWORD: 'udemy'
+      POSTGRES_USER: 'example'
+      POSTGRES_PASSWORD: '123456'
     ports:
       - '5434:5432'

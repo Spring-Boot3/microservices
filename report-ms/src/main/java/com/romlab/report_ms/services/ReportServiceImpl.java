@@ -5,6 +5,7 @@ import com.romlab.report_ms.models.CompanyDTO;
 import com.romlab.report_ms.models.WebSiteDTO;
 import com.romlab.report_ms.repositories.CompaniesFallbackRepository;
 import com.romlab.report_ms.repositories.CompaniesRepository;
+import com.romlab.report_ms.streams.ReportPublisher;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
@@ -24,6 +25,7 @@ public class ReportServiceImpl implements ReportService {
     private final ReportHelper reportHelper;
     private final CompaniesFallbackRepository companiesFallbackRepository;
     private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
+    private final ReportPublisher reportPublisher;
 
     @Override
     public String makeReport(String name) {
@@ -42,6 +44,7 @@ public class ReportServiceImpl implements ReportService {
                 .founder(placeHolders.get(2))
                 .webSites(List.of(webSites.map(WebSiteDTO::new).toArray(WebSiteDTO[]::new)))
                 .build();
+        reportPublisher.publishReport(nameReport);
         companiesRepository.postByName(company);
         return "Saved";
     }
