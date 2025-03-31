@@ -38,6 +38,8 @@ public class CompanyController {
 
     @Operation(summary = "create in DB a company given a company from body")
     @PostMapping
+    @Observed(name = "company.save")
+    @Timed(value = "company.save")
     public ResponseEntity<Company> post(@RequestBody Company company) {
         log.info("POST: company {}", company.getName());
         return ResponseEntity.created(URI.create(companyService.create(company).getName())).build();
