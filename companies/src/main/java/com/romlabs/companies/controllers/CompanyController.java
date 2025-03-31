@@ -2,6 +2,8 @@ package com.romlabs.companies.controllers;
 
 import com.romlabs.companies.entities.Company;
 import com.romlabs.companies.services.CompanyService;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,8 @@ public class CompanyController {
 
     @Operation(summary = "get a company given a company name")
     @GetMapping(path = "/{name}")
+    @Observed(name = "company.name")
+    @Timed(value = "company.name")
     public ResponseEntity<Company> get(@PathVariable String name) {
         /*try {
             Thread.sleep(5000);
